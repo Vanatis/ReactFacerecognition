@@ -12,7 +12,7 @@ class Profile extends Component {
   }
 
   onProfileUpdate = (data) => {
-    fetch(`http://localhost:3000/profile/${this.props.user.id}`, {
+    fetch(`https://ancient-temple-74978.herokuapp.com/profile/${this.props.user.id}`, {
       method: 'post',
       headers: {
         'Content-Type': 'application/json',
@@ -88,4 +88,3 @@ class Profile extends Component {
 }
 
 export default Profile;
-
