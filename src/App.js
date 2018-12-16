@@ -4,7 +4,6 @@ import FaceRecognition from './components/FaceRecognition/FaceRecognition';
 import Navigation from './components/Navigation/Navigation';
 import Signin from './components/Signin/Signin';
 import Register from './components/Register/Register';
-import Logo from './components/Logo/Logo';
 import ImageLinkForm from './components/ImageLinkForm/ImageLinkForm';
 import Rank from './components/Rank/Rank';
 import Profile from './components/Profile/Profile';
@@ -114,40 +113,41 @@ class App extends Component {
   }
 
   onButtonSubmit = () => {
+    const token = window.sessionStorage.getItem('token');
     this.setState({imageUrl: this.state.input});
-      fetch('https://ancient-temple-74978.herokuapp.com/imageurl', {
-        method: 'post',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': window.sessionStorage.getItem('token')
-        },
-        body: JSON.stringify({
-          input: this.state.input
-        })
+    fetch('https://ancient-temple-74978.herokuapp.com/imageurl', {
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': token
+      },
+      body: JSON.stringify({
+        input: this.state.input
       })
-      .then(response => response.json())
-      .then(response => {
-        if (response) {
-          fetch('https://ancient-temple-74978.herokuapp.com/image', {
-            method: 'put',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': window.sessionStorage.getItem('token')
-            },
-            body: JSON.stringify({
-              id: this.state.user.id
-            })
+    })
+    .then(response => response.json())
+    .then(response => {
+      if (response) {
+        fetch('https://ancient-temple-74978.herokuapp.com/image', {
+          method: 'put',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': token
+          },
+          body: JSON.stringify({
+            id: this.state.user.id
           })
-            .then(response => response.json())
-            .then(count => {
-              this.setState(Object.assign(this.state.user, { entries: count}))
-            })
-            .catch(console.log)
+        })
+          .then(response => response.json())
+          .then(count => {
+            this.setState(Object.assign(this.state.user, { entries: count}))
+          })
+          .catch(console.log)
 
-        }
-        this.displayFaceBox(this.calculateFaceLocation(response))
-      })
-      .catch(err => console.log(err));
+      }
+      this.displayFaceBox(this.calculateFaceLocation(response))
+    })
+    .catch(err => console.log(err));
   }
 
   onRouteChange = (route) => {
@@ -173,7 +173,9 @@ class App extends Component {
         <Particles className='particles'
           params={particlesOptions}
         />
-        <Navigation isSignedIn={isSignedIn} onRouteChange={this.onRouteChange} toggleModal={this.toggleModal}/>
+        { isSignedIn &&
+            <Navigation name={this.state.user.name} isSignedIn={isSignedIn} onRouteChange={this.onRouteChange} toggleModal={this.toggleModal}/>
+        }
         {
           isProfileOpen &&
           <Modal>
@@ -182,7 +184,6 @@ class App extends Component {
         }
         { route === 'home'
           ? <div>
-              <Logo />
               <Rank
                 name={this.state.user.name}
                 entries={this.state.user.entries}

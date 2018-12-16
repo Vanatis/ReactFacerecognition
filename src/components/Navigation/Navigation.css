@@ -1,0 +1,12 @@
+nav {
+  flex-flow: row wrap;
+  align-items: center;
+  background-color: #212121;
+  height: 60px;
+}
+
+nav p {
+  color: #fff;
+  margin: 0;
+  padding-right: 30px;
+}
